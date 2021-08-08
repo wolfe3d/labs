@@ -1,7 +1,27 @@
 <?php
-function makeImage($db, $fieldWidth, $fieldHeight, $numRedCircles, $numBlackCircles, $numBlueRectangles)
-{
-$dir = "../../fields/";
+require_once  ("../../connectdb.php");
+
+$fieldId=intval($_REQUEST['field']);
+/*check to see if id exists*/
+$query = "select * from `wolfe_fieldgenerator` where `field` = $fieldId";
+echo $query;
+$result = $mysqlConn->query($query) or error_log("\n<br />Warning: query failed:$query. " . $mysqlConn->error. ". At file:". __FILE__ ." by " . $_SERVER['REMOTE_ADDR'] .".");
+if (mysqli_num_rows($result)>0) {
+	$row = $result->fetch_assoc();
+	/*Read old values into variables*/
+	$fieldWidth = $row['width'];
+	$fieldHeight = $row['height'];
+	$numRedCircles = $row['red'];
+	$numBlackCircles = $row['black'];
+	$numBlueRectangles = $row['blue'];
+	if (isset ($row['fieldimage']))
+	{
+		exit("Image already exists!");
+	}
+}
+else {
+	exit("Field has not been created!");
+}
 
 // create a blank image
 $image = imagecreatetruecolor($fieldWidth, $fieldHeight);
@@ -46,14 +66,11 @@ for ($i = 0; $i < $numBlueRectangles; $i++)
 
 $bytes = random_bytes(20);
 $filename = bin2hex($bytes) . ".png";
-
-//TODO: Check to make sure no other files have the same filename in the database
-
+$dir = "../../fields/";
 // output the picture
 /*header('Content-Disposition: Attachment;filename=image.png');
 header('Content-type: image/png');*/
 imagepng($image, $dir.$filename);
 imagedestroy($image);
-return  $filename;
-}
+echo  $dir.$filename;
 ?>

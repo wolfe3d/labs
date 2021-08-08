@@ -1,10 +1,6 @@
 <?php
-$mysqlConn= mysqli_connect('localhost', 'ggUs3963!er', '3DP2PuMsHwzXRpXR', 'wolfescience');
-/* check connection */
-if ($mysqlConn->connect_errno) {
-   printf("Connect failed: %s\n", $mysqlConn->connect_error);
-   exit();
-}
+require_once  ("../../connectdb.php");
+
 if(is_null($_REQUEST["classID"]))
 {
 	$query = "SELECT * FROM `wolfe_classes`";
@@ -45,7 +41,7 @@ function getMateName($user)
 	{
 		$query = "SELECT * FROM `wolfe_users` WHERE `id` = $user;";
 		$result = $mysqlConn->query($query) or error_log("\n<br />Warning: query failed:$query. " . $mysqlConn->error. ". At file:". __FILE__ ." by " . $_SERVER['REMOTE_ADDR'] .".");
-		if ($row = $result->fetch_assoc()) 
+		if ($row = $result->fetch_assoc())
 		{
 			$fullName = $row['first'] . " " . $row['last'];
 			return substr($fullName, 0, 50);
@@ -126,7 +122,7 @@ function dataGenCalc($generation)
 	$totalGenotypes = array_sum($generation);
 	$outputStr = "";
 	if($totalGenotypes)
-	{	
+	{
 		$outputStr .="<tr><th>AA</th><th>Aa</th><th>aa</th><th>total</th></tr>";
 		$outputStr .="<tr><td>".$generation[0]."</td><td>".$generation[1]."</td><td>".$generation[2]."</td><td>".$totalGenotypes."</td></tr>";
 		$outputStr .="<tr><td>".$generation[0]/$totalGenotypes."</td><td>".$generation[1]/$totalGenotypes."</td><td>".$generation[2]/$totalGenotypes."</td></tr>";
@@ -162,7 +158,7 @@ function dataGen($trial)
 				}
 				$generationGenotypes = [0,0,0];
 				$group = intval($row['groupID']);
-				$outputStr .="<tr><th colspan='4' style='font-size: 175%; color: #426cf5;'>Group ".$group."</th></tr>";		
+				$outputStr .="<tr><th colspan='4' style='font-size: 175%; color: #426cf5;'>Group ".$group."</th></tr>";
 			}
 		}
 		if($gen!=intval($row['gen']))
@@ -176,7 +172,7 @@ function dataGen($trial)
 			//write new Generation Title
 			$generationGenotypes = [0,0,0];
 			$outputStr .="<tr><th colspan='4' style='font-size: 150%;'>Generation ".$gen."</th></tr>";
-			$outputStr .="<tr><th>Id</th><th>User</th><th>Genotype</th><th>Mate</th><th>Mating Attempts</th></tr>";	
+			$outputStr .="<tr><th>Id</th><th>User</th><th>Genotype</th><th>Mate</th><th>Mating Attempts</th></tr>";
 		}
 		$generationGenotypes = sumGenotypes(intval($row['genotype']), $generationGenotypes);
 		$outputStr .= "<tr><td>".$row['id']."</td><td>".getMateName($row['user1'])."</td><td>".getGenotypeString(intval($row['genotype']))."</td><td>".getMateName($row['user2'])."</td><td>".$row['tries']."</td></tr>";
@@ -223,8 +219,8 @@ function dataGen($trial)
 		<div>Total Students: <?=$totalStudents?></div>
 		</div>
 		</div>
-		
-		
+
+
 		<div style="padding:10px; max-width: 1000px; display: block; margin-left: auto; margin-right: auto">
 		<div style="background-color: rgba(255,255,255,0.8); padding: 10px; border: 1px solid black;">
 		<h1>Ear Wax</h1>
@@ -251,7 +247,7 @@ function dataGen($trial)
 		</table>
 		</div>
 		</div>
-		
+
 		<div style="padding:10px; max-width: 1000px; display: block; margin-left: auto; margin-right: auto">
 		<div style="background-color: rgba(255,255,255,0.8); padding: 10px; border: 1px solid black;">
 		<h1>Case 1 - Ideal</h1>
@@ -260,7 +256,7 @@ function dataGen($trial)
 		</table>
 		</div>
 		</div>
-	
+
 		<div style="padding:10px; max-width: 1000px; display: block; margin-left: auto; margin-right: auto">
 		<div style="background-color: rgba(255,255,255,0.8); padding: 10px; border: 1px solid black;">
 		<h1>Case 2 - Selection</h1>
@@ -268,7 +264,7 @@ function dataGen($trial)
 			<?=dataGen(1)?>
 		</table>
 		</div>
-		</div>	
+		</div>
 
 		<div style="padding:10px; max-width: 1000px; display: block; margin-left: auto; margin-right: auto">
 		<div style="background-color: rgba(255,255,255,0.8); padding: 10px; border: 1px solid black;">
@@ -286,6 +282,6 @@ function dataGen($trial)
 			<?=dataGen(3)?>
 		</table>
 		</div>
-		</div>		
+		</div>
 	</body>
 </html>

@@ -28,14 +28,14 @@
 			if(html=="1")
 			{
 				$("#teacherFound").css('color', 'blue');
-				$("#teacherFound").html("");	
-				$("#teacherExists").attr('value', 'Teacher Found.');  
+				$("#teacherFound").html("");
+				$("#teacherExists").attr('value', 'Teacher Found.');
 			}
 			else
 			{
 				$("#teacherFound").css('color', 'red');
 				$("#teacherFound").html("Check the email address.");
-				$("#teacherExists").attr('value', '***Failed to Find Teacher.');  
+				$("#teacherExists").attr('value', '***Failed to Find Teacher.');
 			}
 		});
 
@@ -46,7 +46,7 @@
 
 	$().ready(function() {
 		jQuery.validator.addMethod(
-		"myTeacher", 
+		"myTeacher",
 		function(value, element) {
 // validate form and submit
 				$.ajax({
@@ -61,7 +61,7 @@
                 }
              });
             return response;
-				
+
 		}, "Teacher not found!  Please, check the email address.");
 		// validate signup form on keyup and submit
 		$("#studentSignIn").validate({
@@ -90,12 +90,28 @@
 						alert('Error: ', textStatus);
 					},
 					success:function(msg){
-						
-						$("#field").attr('value',msg);
-						form.submit();
+						//alert('student added!'+msg+'here');
+						if(msg!="0"){
+							$("#field").attr('value',msg);
+							form.submit();
+						}
 					}
 				});
             }
+		});
+		$("#studentPrevious").validate({
+			rules: {
+				field: "required",
+				pass: "required",
+			},
+			messages: {
+				field: "*Please enter your a field id.",
+				pass: "*Please enter your the passcode given from your last submission.",
+
+			},
+			submitHandler: function(form) {
+							form.submit();
+			}
 		});
 	});
 </script>
@@ -103,8 +119,9 @@
   <body>
 
  <h1>Quadrat Sampling</h1>
- 
+
  <form id="studentSignIn" method="post" action="collect.php">
+	 <p>If this is your first submission, start here:</p>
 		<fieldset>
 			<legend>Your Information</legend>
 			<p> You must enter your information correctly and save it before completing the activity.</p>
@@ -118,7 +135,7 @@
 			</p>
 			<p>
 				<label for="teacher">Teacher email address</label>
-				<input id="teacher" name="teacher" type="email"> 
+				<input id="teacher" name="teacher" type="email">
 			</p>
 			<p>
 				<label for="class">Period/Class</label>
@@ -127,8 +144,25 @@
 			<input id="field" name="field" type="text" hidden>
 		</fieldset>
 		<p>
-				<input class="submit" type="submit" value="Save">
+				<input class="submit" type="submit" value="Start">
 		</p>
 </form>
+
+<form id="studentPrevious" method="post" action="collect.php">
+	<p>If you are going to try again, enter your field and passcode below:</p>
+	 <fieldset>
+		 <p>
+			 <label for="field2">Field ID</label>
+			 <input id="field2" name="field" type="text">
+		 </p>
+		 <p>
+			 <label for="pass">Passcode</label>
+			 <input id="pass" name="pass" type="password">
+		 </p>
+	 </fieldset>
+	 <p>
+			 <input class="submit" type="submit" value="Try Again">
+	 </p>
+</form>
   </body>
-</html>            
+</html>

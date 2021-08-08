@@ -1,10 +1,6 @@
 <?php
-$mysqlConn= mysqli_connect('localhost', 'ggUs3963!er', '3DP2PuMsHwzXRpXR', 'wolfescience');
-/* check connection */
-if ($mysqlConn->connect_errno) {
-   printf("Connect failed: %s\n", $mysqlConn->connect_error);
-   exit();
-}
+require_once  ("../../connectdb.php");
+
 $userID = intval($_REQUEST["userID"]);
 $groupID=-1;
 if($userID)
@@ -28,7 +24,7 @@ if($userID)
 				$className = $row2["name"];
 				$wetSchool = $row2['wet'];
 				$drySchool = $row2['dry'];
-			}			
+			}
 			$trial= intval($_REQUEST["trial"]);
 	}
 	else
@@ -79,11 +75,11 @@ function checkTrial($trial)
 	$query = "SELECT * FROM `wolfe_generations` WHERE `user1` = $userID AND `trial` = $trial ORDER BY `gen` DESC;";
 	$result = $mysqlConn->query($query) or error_log("\n<br />Warning: query failed:$query. " . $mysqlConn->error. ". At file:". __FILE__ ." by " . $_SERVER['REMOTE_ADDR'] .".");
 	$row = $result->fetch_assoc();
-	if ($row) 
+	if ($row)
 	{
 		return intval($row['gen'])+1;
 		//return "block";
-	} 
+	}
 	else
 	return 0;
 }
@@ -95,7 +91,7 @@ function getMateName($user)
 	{
 		$query = "SELECT * FROM `wolfe_users` WHERE `id` = $user;";
 		$result = $mysqlConn->query($query) or error_log("\n<br />Warning: query failed:$query. " . $mysqlConn->error. ". At file:". __FILE__ ." by " . $_SERVER['REMOTE_ADDR'] .".");
-		if ($row = $result->fetch_assoc()) 
+		if ($row = $result->fetch_assoc())
 		{
 			$fullName = $row['first'] . " " . $row['last'];
 			return substr($fullName, 0, 50);
@@ -145,7 +141,7 @@ function getEarWax($wax)
 <meta http-equiv="Pragma" content="no-cache">
 		<script src="lib/jquery.js"></script>
 		<script type="text/javascript">
-			
+
 			$().ready(function() {
 				$("#trialbutton0").click(function(e) {
 					e.preventDefault();
@@ -211,7 +207,7 @@ function getEarWax($wax)
 				});
 
 				request.done(function( msg ) {
-					
+
 					alert (msg);
 					var outputMsg = JSON.parse(msg);
 					if(outputMsg.error!==undefined)
@@ -222,7 +218,7 @@ function getEarWax($wax)
 					{
 						alert (outputMsg.genID);
 						var outputStr = ""<tr><td>"+outputMsg.gen+"</td><td></td><td></td></tr>";
-						
+
 						$( "#trial"+trialNumber ).show();
 						$( "#trialbutton"+trialNumber).html('Reproduce');
 						if (outputMsg.gen==10)
@@ -265,7 +261,7 @@ function getEarWax($wax)
 		}
 		</style>
 		<title>Hardy-Weinberg Class Simulator </title>
-		
+
 	</head>
 	<body style="background-image: url('lib/chick.jpeg'); background-repeat: no-repeat;background-color: #a88c76;background-position: center; ">
 <?php if($userID){ ?>
@@ -302,11 +298,11 @@ function getEarWax($wax)
 	</table>
 	</div>
 	</div>
-	
+
 	<br>
-	
+
 	<table style="border: 0px;"><tbody><tr>
-	<?php 
+	<?php
 	$trialNames = ["Case 1 - Ideal", "Case 2 - Selection", "Case 3 - Heterozygote Advantage", "Case 4 - Genetic Drift (Group $groupID)"];
 	for ($trial=0; $trial<=3; $trial++)
 	{
@@ -326,7 +322,7 @@ function getEarWax($wax)
 	{
 		$buttonVis = "none";
 	}
-	?>	
+	?>
 	<td style="background-color: rgba(255,255,255,0.8); padding: 10px;">
 	<h1><?=$trialNames[$trial]?></h1>
 	<table style="display: <?=$tableVis?>" id='trial<?=$trial?>'>
@@ -341,20 +337,20 @@ function getEarWax($wax)
 	<div id="trialSummary<?=$trial?>" style="color:blue; display: <?=$tableVis?>" ><?php include 'checkGen.php';?></div>
 	<button id="trialSummarybutton<?=$trial?>" value="val_<?=$trial?>" name="trialSummarybutton<?=$trial?>" style="display: <?=$tableVis?>" >Update Generation Data</button>
 	</td>
-	
-	<?php 
+
+	<?php
 	}
 	?>
-	
+
 	</td></tr></tbody></table>
 <?php
 }
 else
-{ 
+{
 ?>
  <p>Try resigning in. <a href="index.html">Go Back</a></p>
 <?php
 }
 ?>
   </body>
-</html>            
+</html>

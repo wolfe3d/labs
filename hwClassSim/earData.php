@@ -1,10 +1,5 @@
 <?php
-$mysqlConn= mysqli_connect('localhost', 'ggUs3963!er', '3DP2PuMsHwzXRpXR', 'wolfescience');
-/* check connection */
-if ($mysqlConn->connect_errno) {
-   printf("Connect failed: %s\n", $mysqlConn->connect_error);
-   exit();
-}
+require_once  ("../../connectdb.php");
 
 if(!$classID)
 {

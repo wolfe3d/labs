@@ -1,8 +1,12 @@
 <!DOCTYPE HTML>
 <?php
-$fieldId=intval($_REQUEST['field']);
+if (empty ($_POST['field']))
+{
+	exit ("No field to measure!");
+}
+$fieldId=intval($_POST['field']);
 
-require_once  ("../../connect_db.php");
+require_once  ("../../connectdb.php");
 
 /*check to see if id exists*/
 $query = "select * from `wolfe_fieldgenerator` where `field` = $fieldId";
@@ -13,11 +17,36 @@ if($result)
 	$row = $result->fetch_assoc();
 	if (!$row)
 	{
-		echo "Failed to find record!";
-		exit;
+		exit( "Failed to find record!" );
 	}
 }
-
+if(!empty($row['passcode']))
+{
+	if (empty ($_POST['pass']))
+	{
+		exit ("Unknown error: 111."); //No passcode entered
+	}
+	else {
+		if($_POST['pass']!=$row['passcode'])
+		{
+				exit ("Unknown error: 112.");  //Passcode entered does not match passcode
+		}
+	}
+}
+$first = isset($row['first'])?$row['first']:"";
+$last = isset($row['last'])?$row['last']:"";
+$teacher = isset($row['teacher'])?$row['teacher']:"";
+$class = isset($row['class'])?$row['class']:"";
+$width = isset($row['width'])?$row['width']:"";
+$height = isset($row['height'])?$row['height']:"";
+$field = isset($row['field'])?$row['field']:"";
+$studentRed = isset($row['studentRed'])?$row['studentRed']:"";
+$studentBlue = isset($row['studentBlue'])?$row['studentBlue']:"";
+$studentBlack = isset($row['studentBlack'])?$row['studentBlack']:"";
+$studentSimpson = isset($row['studentSimpson'])?$row['studentSimpson']:"";
+$numQuadrats = isset($row['numQuadrats'])?$row['numQuadrats']:"";
+$sideLengthQuadrat = isset($row['sideLengthQuadrat'])?$row['sideLengthQuadrat']:"";
+$fieldimage = isset($row['fieldimage'])?$row['fieldimage']:"";
 ?>
 <html lang="en">
 	<head>
@@ -41,16 +70,32 @@ if($result)
 		// validate signup form on keyup and submit
 		$("#postResults").validate({
 			rules: {
-				black: "required",
-				red: "required",
-				blue: "required",
-				simpsons: "required",
+				black: {
+					min: 0,
+					required:true,
+					digits:true,
+				},
+				red: {
+					min: 0,
+					required:true,
+					digits:true,
+				},
+				blue: {
+					min: 0,
+					required:true,
+					digits:true,
+				},
+				simpsons: {
+					min: 0,
+					required:true,
+					number:true,
+				}
 			},
 			messages: {
-				black: "Calculate the population for the black diamonds.",
-				red: "Calculate the population for the red circles.",
-				blue: "Calculate the population for the blue squares.",
-				simpsons: "Calculate the Simpsons Index of diversity for this field.",
+				black: "Calculate the population for the black diamonds. Give your answer as a whole number.",
+				red: "Calculate the population for the red circles. Give your answer as a whole number.",
+				blue: "Calculate the population for the blue squares. Give your answer as a whole number.",
+				simpsons: "You must enter a value here.  Give your answer as a decimal to the nearest hundredth.  Make sure your value is positive.  If you got a negative answer, make sure you are subtracting from 1.",
 			},
 			submitHandler: function(form) {
 				form.submit();
@@ -64,15 +109,15 @@ if($result)
 <h1>Quadrat Sampling</h1>
 <h2>Your information</h2>
 <div style="text-indent:40px">
-	<div>Name: <?=$row['first']?> <?=$row['last']?></div>
-	<div>Teacher: <?=$row['teacher']?></div>
-	<div>Class: <?=$row['class']?></div>
+	<div>Name: <?=$first?> <?=$last?></div>
+	<div>Teacher: <?=$teacher?></div>
+	<div>Class: <?=$class?></div>
 </div>
 
 <h2>Field Information</h2>
 <div style="text-indent:40px">
-	<div>Width = <?=$row['width']?> m</div>
-	<div>Height = <?=$row['height']?> m</div>
+	<div>Width = <?=$width?> m</div>
+	<div>Height = <?=$height?> m</div>
 </div>
 
 <h2>Procedure</h2>
@@ -83,7 +128,7 @@ if($result)
 	<div>Mouse location in field: (<span id="mX"></span>,<span id="mY"></span>)</div>
 	<div><a href="#" onclick="clearCanvas();">Clear All Quadrats</a>
  </div>
-<div id="paint" style="padding:20px;width:<?=$row['width']?>px;height:<?=$row['height']?>px;">
+<div id="paint" style="padding:20px;width:<?=$row['width']?>px;height:<?=$height?>px;">
  		<canvas id="myCanvas"></canvas>
 </div>
 
@@ -101,7 +146,8 @@ var spanY = document.getElementById("mY");
 var mouse = {x: 0, y: 0};
 
 var background = new Image();
-background.src = "imagegen.php?field=<?=$row['field']?>";
+var dir = "../../fields/";
+background.src = dir + '<?=$fieldimage?>';
 // Make sure the image is loaded first otherwise nothing will draw.
 background.onload = function(){
     ctx.drawImage(background,0,0);
@@ -164,30 +210,34 @@ function clearCanvas()
 		<fieldset>
 			<legend>Results</legend>
 			<p>
+				<label for="field">Field ID</label>
+				<input id="field" name="field" type="text" readonly style="background: grey;" value="<?=$field?>">
+			</p>
+			<p>
 				<label for="size">Length (m) of Side of Quadrat Used</label>
-				<input id="size" name="size" type="text" readonly style="background: grey;">
+				<input id="size" name="size" type="text" readonly style="background: grey;" value="<?=$sideLengthQuadrat?>">
 			</p>
 			<p>
 				<label for="number">Number of Quadrats</label>
-				<input id="number" name="number" type="text" readonly style="background: grey;">
+				<input id="number" name="number" type="text" readonly style="background: grey;" value="<?=$numQuadrats?>">
 			</p>
 			<div>Enter your calculations of the number of each organism in the entire field.</div>
 			<p>
 				<label for="black">Number of Black Diamonds</label>
-				<input id="black" name="black" type="text">
+				<input id="black" name="black" type="text" value="<?=$studentBlack?>">
 			</p>
 			<p>
 				<label for="red">Number of Red Circles</label>
-				<input id="red" name="red" type="text">
+				<input id="red" name="red" type="text" value="<?=$studentRed?>">
 			</p>
 			<p>
 				<label for="blue">Number of Blue Squares</label>
-				<input id="blue" name="blue" type="text">
+				<input id="blue" name="blue" type="text" value="<?=$studentBlue?>">
 			</p>
 			<div>Calculate the diversity index.  Give your answer to the nearest hundredth (2 decimal places).</div>
 			<p>
 				<label for="simpsons">Simpson's Index</label>
-				<input id="simpsons" name="simpsons" type="text">
+				<input id="simpsons" name="simpsons" type="text" value="<?=$studentSimpson?>">
 			</p>
 		</fieldset>
 		<p>

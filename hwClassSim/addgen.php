@@ -1,10 +1,6 @@
 <?php
-$mysqlConn= mysqli_connect('localhost', 'ggUs3963!er', '3DP2PuMsHwzXRpXR', 'wolfescience');
-/* check connection */
-if ($mysqlConn->connect_errno) {
-   echo json_encode(array("error"=>"Connect failed: $mysqlConn->connect_error"));
-   exit();
-}
+require_once  ("../../connectdb.php");
+
 $userID = intval($_REQUEST["userID"]);
 $trial = intval($_REQUEST["trial"]);
 $classID = intval($_REQUEST["classID"]);
@@ -19,7 +15,7 @@ if($gen < 11) //Do not add more than 10 generations
 	if($gen == 0)
 	{
 		$queryInsert = "INSERT INTO `wolfe_generations` (`gen`, `genotype`, `user1`, `user2`, `trial`, `classID`, `groupID`) VALUES ('0', '1', '$userID', NULL, '$trial', '$classID', '$groupID');";
-		if ($mysqlConn->query($queryInsert) === TRUE) 
+		if ($mysqlConn->query($queryInsert) === TRUE)
 		{
 			//New record created successfully
 			$genID = $mysqlConn->insert_id;
@@ -27,7 +23,7 @@ if($gen < 11) //Do not add more than 10 generations
 			$allData = array("genID"=>$genID, "gen"=> $gen, "genotype"=>$genotype[0], "user2"=>"none", "trial"=>$trial, "tries"=>"0", "classID"=> $classID, "groupID"=> $groupID);
 			echo json_encode($allData);
 			}
-		else 
+		else
 		{
 			echo json_encode(array("error"=>"Error_addGen1: $queryInsert $mysqlConn->error"));
 		}
@@ -44,7 +40,7 @@ if($gen < 11) //Do not add more than 10 generations
 			//echo "randomMate $randomMate[0], $randomMate[1]";
 			$genotype = determineGenotype(getGenotype($trial, $gen-1), $randomMate[1], $trial, 1);
 			$queryInsert = "INSERT INTO `wolfe_generations` (`gen`, `genotype`, `user1`, `user2`, `trial`, `tries`, `classID`, `groupID`) VALUES ($gen, $genotype[0], $userID, $randomMate[0], $trial, $genotype[1], $classID, $groupID);";
-			if ($mysqlConn->query($queryInsert) === TRUE) 
+			if ($mysqlConn->query($queryInsert) === TRUE)
 			{
 					$genID = $mysqlConn->insert_id;
 					$allData = array("genID"=>$genID, "gen"=> $gen, "genotype"=>$genotype[0], "user2"=>$user2, "trial"=>$trial, "tries"=>$genotype[1], "classID"=> $classID, "groupID"=> $groupID);
@@ -52,7 +48,7 @@ if($gen < 11) //Do not add more than 10 generations
 					//echo "<tr><td>".$gen."</td><td>".getGenotypeString($genotype)."</td><td>".getMateName($randomMate[0])."</td></tr>";
 					//echo "New record created successfully. Last inserted ID is: " . $userID;
 			}
-			else 
+			else
 			{
 				echo json_encode(array("error"=>"Error_addGen2: $queryInsert $mysqlConn->error "));
 			}
@@ -66,10 +62,10 @@ function checkTrial($trial)
 	$query = "SELECT * FROM `wolfe_generations` WHERE `user1` = $userID AND `trial` = $trial ORDER BY `gen` DESC;";
 	$result = $mysqlConn->query($query) or error_log("\n<br />Warning: query failed:$query. " . $mysqlConn->error. ". At file:". __FILE__ ." by " . $_SERVER['REMOTE_ADDR'] .".");
 	$row = $result->fetch_assoc();
-	if ($row) 
+	if ($row)
 	{
 		return intval($row['gen'])+1;
-	} 
+	}
 	else
 	return 0;
 }
@@ -83,11 +79,11 @@ function getRandomMate($trial, $gen)
 	$query = "SELECT * FROM `wolfe_generations` WHERE `trial`=$trial AND `classID`=$classID AND `gen`=$gen".$queryGroup." AND `user1`!=$userID order by RAND() LIMIT 1;";
 	$result = $mysqlConn->query($query) or error_log("\n<br />Warning: query failed:$query. " . $mysqlConn->error. ". At file:". __FILE__ ." by " . $_SERVER['REMOTE_ADDR'] .".");
 	$row = $result->fetch_assoc();
-	if($row) 
+	if($row)
 	{
 		return [$row['user1'], $row['genotype']];
-	} 
-	return Null; 
+	}
+	return Null;
 }
 function getMateName($user)
 {
@@ -96,7 +92,7 @@ function getMateName($user)
 	{
 		$query = "SELECT * FROM `wolfe_users` WHERE `id` = $user;";
 		$result = $mysqlConn->query($query) or error_log("\n<br />Warning: query failed:$query. " . $mysqlConn->error. ". At file:". __FILE__ ." by " . $_SERVER['REMOTE_ADDR'] .".");
-		if ($row = $result->fetch_assoc()) 
+		if ($row = $result->fetch_assoc())
 		{
 			$fullName = $row['first'] . " " . $row['last'];
 			return substr($fullName, 0, 50);
@@ -136,7 +132,7 @@ function determineGenotype($genotype1, $genotype2, $trial, $tries)
 	{
 		if ($genotype1==$genotype2 && $genotype1==0)
 		{
-			//if parents are AA and AA, then offspring will be AA 
+			//if parents are AA and AA, then offspring will be AA
 			return [$genotype1, $tries];
 		}
 		else if ($genotype1==$genotype2)
@@ -145,7 +141,7 @@ function determineGenotype($genotype1, $genotype2, $trial, $tries)
 			$n=0;
 			while($selection==2):
 			{
-				if ($n>0) 
+				if ($n>0)
 				{
 					$tries +=1;
 				}
@@ -164,7 +160,7 @@ function determineGenotype($genotype1, $genotype2, $trial, $tries)
 	{
 		if ($genotype1==$genotype2 && $genotype1==0)
 		{
-			//if parents are AA and AA, then offspring will be AA 
+			//if parents are AA and AA, then offspring will be AA
 			return [$genotype1, $tries];
 		}
 		else if ($genotype1==$genotype2)
@@ -223,9 +219,9 @@ function getGenotype($trial, $gen)
 	$query = "SELECT * FROM `wolfe_generations` WHERE `trial` = $trial AND `user1` = $userID ORDER BY `gen` DESC;";
 	$result = $mysqlConn->query($query) or error_log("\n<br />Warning: query failed:$query. " . $mysqlConn->error. ". At file:". __FILE__ ." by " . $_SERVER['REMOTE_ADDR'] .".");
 	$row = $result->fetch_assoc();
-	if ($row) 
+	if ($row)
 	{
 		return intval($row['genotype']);
-	} 
+	}
 }
 ?>

@@ -1,10 +1,6 @@
 <?php
-$mysqlConn= mysqli_connect('localhost', 'ggUs3963!er', '3DP2PuMsHwzXRpXR', 'wolfescience');
-/* check connection */
-if ($mysqlConn->connect_errno) {
-   printf("Connect failed: %s\n", $mysqlConn->connect_error);
-   exit();
-}
+require_once  ("../../connectdb.php");
+
 $userID = intval($_REQUEST["userID"]);
 $groupID=-1;
 if($userID)
@@ -28,7 +24,7 @@ if($userID)
 				$className = $row2["name"];
 				$wetSchool = $row2['wet'];
 				$drySchool = $row2['dry'];
-			}			
+			}
 			$trial= intval($_REQUEST["trial"]);
 			$action = $mysqlConn->real_escape_string(strip_tags(trim($_REQUEST["action"])));
 			if ($action == "add")
@@ -79,10 +75,10 @@ function checkTrial($trial)
 	$query = "SELECT * FROM `wolfe_generations` WHERE `user1` = $userID AND `trial` = $trial ORDER BY `gen` DESC;";
 	$result = $mysqlConn->query($query) or error_log("\n<br />Warning: query failed:$query. " . $mysqlConn->error. ". At file:". __FILE__ ." by " . $_SERVER['REMOTE_ADDR'] .".");
 	$row = $result->fetch_assoc();
-	if ($row) 
+	if ($row)
 	{
 		return intval($row['gen'])+1;
-	} 
+	}
 	else
 	return 0;
 }
@@ -97,10 +93,10 @@ function getRandomMate($trial, $gen)
 	$query = "SELECT * FROM `wolfe_generations` WHERE `trial`=$trial AND `classID`=$classID AND `gen`=$gen".$queryGroup." AND `user1`!=$userID order by RAND() LIMIT 1;";
 	$result = $mysqlConn->query($query) or error_log("\n<br />Warning: query failed:$query. " . $mysqlConn->error. ". At file:". __FILE__ ." by " . $_SERVER['REMOTE_ADDR'] .".");
 	$row = $result->fetch_assoc();
-	if ($row) 
+	if ($row)
 	{
 		return [$row['user1'], $row['genotype']];
-	} 
+	}
 	echo "<div style='color:red'>Oops No Mate...You cannot reproduce with yourself.</div>";
 }
 function getMateName($user)
@@ -110,7 +106,7 @@ function getMateName($user)
 	{
 		$query = "SELECT * FROM `wolfe_users` WHERE `id` = $user;";
 		$result = $mysqlConn->query($query) or error_log("\n<br />Warning: query failed:$query. " . $mysqlConn->error. ". At file:". __FILE__ ." by " . $_SERVER['REMOTE_ADDR'] .".");
-		if ($row = $result->fetch_assoc()) 
+		if ($row = $result->fetch_assoc())
 		{
 			$fullName = $row['first'] . " " . $row['last'];
 			return substr($fullName, 0, 50);
@@ -176,10 +172,10 @@ function getGenotype($trial, $gen)
 	$query = "SELECT * FROM `wolfe_generations` WHERE `trial` = $trial AND `user1` = $userID ORDER BY `gen` DESC;";
 	$result = $mysqlConn->query($query) or error_log("\n<br />Warning: query failed:$query. " . $mysqlConn->error. ". At file:". __FILE__ ." by " . $_SERVER['REMOTE_ADDR'] .".");
 	$row = $result->fetch_assoc();
-	if ($row) 
+	if ($row)
 	{
 		return intval($row['genotype']);
-	} 
+	}
 }
 function determineGenotype($genotype1, $genotype2, $trial)
 {
@@ -201,7 +197,7 @@ function determineGenotype($genotype1, $genotype2, $trial)
 	{
 		if ($genotype1==$genotype2 && $genotype1==0)
 		{
-			//if parents are AA and AA, then offspring will be AA 
+			//if parents are AA and AA, then offspring will be AA
 			return $genotype1;
 		}
 		else if ($genotype1==$genotype2)
@@ -221,7 +217,7 @@ function determineGenotype($genotype1, $genotype2, $trial)
 	{
 		if ($genotype1==$genotype2 && $genotype1==0)
 		{
-			//if parents are AA and AA, then offspring will be AA 
+			//if parents are AA and AA, then offspring will be AA
 			return $genotype1;
 		}
 		else if ($genotype1==$genotype2)
@@ -278,12 +274,12 @@ function addGen($trial)
 		if($gen == 0)
 		{
 			$queryInsert = "INSERT INTO `wolfe_generations` (`gen`, `genotype`, `user1`, `user2`, `trial`, `classID`, `groupID`) VALUES ('0', '1', '$userID', NULL, '$trial', '$classID', '$groupID');";
-			if ($mysqlConn->query($queryInsert) === TRUE) 
+			if ($mysqlConn->query($queryInsert) === TRUE)
 			{
 					$genID = $mysqlConn->insert_id;
 					//echo "New record created successfully. Last inserted ID is: " . $userID;
 				}
-				else 
+				else
 				{
 					echo "<div style='color:red'>Error_addGen1: " . $queryInsert . "<br>" . $mysqlConn->error . "</div>";
 				}
@@ -293,12 +289,12 @@ function addGen($trial)
 			$randomMate = getRandomMate($trial, $gen-1);
 			$genotype = determineGenotype(getGenotype($trial, $gen-1), $randomMate[1], $trial);
 			$queryInsert = "INSERT INTO `wolfe_generations` (`gen`, `genotype`, `user1`, `user2`, `trial`, `classID`, `groupID`) VALUES ($gen, $genotype, '$userID', $randomMate[0], '$trial', '$classID', '$groupID');";
-			if ($mysqlConn->query($queryInsert) === TRUE) 
+			if ($mysqlConn->query($queryInsert) === TRUE)
 			{
 					$genID = $mysqlConn->insert_id;
 					//echo "New record created successfully. Last inserted ID is: " . $userID;
 			}
-			else 
+			else
 			{
 				echo "<div style='color:red'>Error_addGen2: " . $queryInsert . "<br>" . $mysqlConn->error . "</div>";
 			}
@@ -378,9 +374,9 @@ function getWaxes()
 	</table>
 	</div>
 	</div>
-	
+
 	<br>
-	
+
 	<table style="border: 0px;"><tr><td style="background-color: rgba(255,255,255,0.8); padding: 10px;">
 	<h1>Case 1 - Ideal</h1>
 	<?php if(!checkTrial(0))
@@ -401,7 +397,7 @@ function getWaxes()
 		<?=dataGen(0);?>
 		</table>
 		<?=dataTrial(0,$trialGen[0]);?>
-	<a href='genold.php?userID=<?=$userID?>&action=add&trial=0');">Reproduce</a>		
+	<a href='genold.php?userID=<?=$userID?>&action=add&trial=0');">Reproduce</a>
 	<?php
 	}
 	?>
@@ -425,7 +421,7 @@ function getWaxes()
 		<?=dataGen(1);?>
 		</table>
 		<?=dataTrial(1,$trialGen[1]);?>
-	<a href='genold.php?userID=<?=$userID?>&action=add&trial=1');">Reproduce</a>		
+	<a href='genold.php?userID=<?=$userID?>&action=add&trial=1');">Reproduce</a>
 	<?php
 	}
 	?>
@@ -451,7 +447,7 @@ function getWaxes()
 		<?=dataGen(2);?>
 		</table>
 		<?=dataTrial(2,$trialGen[2]);?>
-	<a href='genold.php?userID=<?=$userID?>&action=add&trial=2');">Reproduce</a>		
+	<a href='genold.php?userID=<?=$userID?>&action=add&trial=2');">Reproduce</a>
 	<?php
 	}
 	?>
@@ -476,7 +472,7 @@ function getWaxes()
 		<?=dataGen(3);?>
 		</table>
 		<?=dataTrial(3,$trialGen[3]);?>
-	<a href='genold.php?userID=<?=$userID?>&action=add&trial=3');">Reproduce</a>		
+	<a href='genold.php?userID=<?=$userID?>&action=add&trial=3');">Reproduce</a>
 	<?php
 	}
 	?>
@@ -485,11 +481,11 @@ function getWaxes()
 <?php
 }
 else
-{ 
+{
 ?>
  <p>Try resigning in. <a href="index.html">Go Back</a></p>
 <?php
 }
 ?>
   </body>
-</html>            
+</html>
