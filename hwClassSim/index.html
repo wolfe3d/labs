@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+  <script src="lib/jquery.js"></script>
+	<script src="lib/jquery.validate.min.js"></script>
+  <script type="text/javascript">
+
+	$().ready(function() {
+		// validate signup form on keyup and submit
+		$("#initialform").validate({
+			rules: {
+				firstname: "required",
+				lastname: "required",
+				classID: "required",
+				email: {
+					required: true,
+					email: true
+				},
+			},
+			messages: {
+				firstname: "Please enter your firstname",
+				lastname: "Please enter your lastname",
+				classCode: {
+					required: "Please enter your class code provided by your teacher",
+				},
+			},
+			submitHandler: function(form) {
+                form.submit();
+            }
+		});
+	});
+</script>
+  <title>Hardy-Weinberg Class Simulator Sign In</title>
+
+  </head>
+  <body">
+  <h1>Hardy-Weinberg Class Simulator</h1>
+	<form id="initialform" method="get" action="gen.php">
+		<fieldset>
+			<legend>Sign in to your class</legend>
+			<p>
+				<label for="firstname">Firstname</label>
+				<input id="firstname" name="firstname" type="text">
+			</p>
+			<p>
+				<label for="lastname">Lastname</label>
+				<input id="lastname" name="lastname" type="text">
+			</p>
+			<p>
+				<label for="classCode">Class Join Code</label>
+				<input id="classCode" name="classCode" type="text">
+			</p>
+			<p>
+				<label for="email">Email</label>
+				<input id="email" name="email" type="email">
+			</p>
+			<p>
+				<label for="earwax">Is your ear wax wet or dry?</label>
+				<select id="earwax" name="earwax">
+					<option value = "0">Wet</option>
+					<option value = "1">Dry</option>
+				</select>
+				<a href="http://udel.edu/~mcdonald/mythearwax.html" target="_blank" rel="noopener noreferrer">Information on Ear Wax</a>
+			</p>
+			<p>
+				<input class="submit" type="submit" value="Submit">
+			</p>
+		</fieldset>
+	</form>
+  </body>
+</html>            

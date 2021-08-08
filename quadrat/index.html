@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta http-equiv="Pragma" content="no-cache">
+	<script src="../lib/jquery.js"></script>
+	<script src="../lib/jquery.validate.min.js"></script>
+	<style>
+		.error {
+		color: red;
+		background-color: #acf;
+		}
+	</style>
+  <title>Quadrat Sampling Lab Generator</title>
+  <script type="text/javascript">
+	/*function checkTeacher(teacher)
+	{
+		// validate signup form on keyup and submit
+		var request = $.ajax({
+			url: "teacher.php",
+			cache: false,
+			method: "POST",
+			data: { teacherID: teacher},
+			dataType: "html"
+		});
+
+		request.done(function( html ) {
+			if(html=="1")
+			{
+				$("#teacherFound").css('color', 'blue');
+				$("#teacherFound").html("");	
+				$("#teacherExists").attr('value', 'Teacher Found.');  
+			}
+			else
+			{
+				$("#teacherFound").css('color', 'red');
+				$("#teacherFound").html("Check the email address.");
+				$("#teacherExists").attr('value', '***Failed to Find Teacher.');  
+			}
+		});
+
+		request.fail(function( jqXHR, textStatus ) {
+			alert( "Request failed: " + textStatus );
+		});
+	}*/
+
+	$().ready(function() {
+		jQuery.validator.addMethod(
+		"myTeacher", 
+		function(value, element) {
+// validate form and submit
+				$.ajax({
+                type: "POST",
+                url: "teacher.php",
+                data: { teacherID: value},
+                dataType:"html",
+                success: function(msg)
+                {
+                    //If username exists, set response to true
+                    response = ( msg == '1' ) ? true : false;
+                }
+             });
+            return response;
+				
+		}, "Teacher not found!  Please, check the email address.");
+		// validate signup form on keyup and submit
+		$("#studentSignIn").validate({
+			rules: {
+				first: "required",
+				last: "required",
+				teacher: {
+					required: true,
+					myTeacher : true,
+					email: true
+				},
+			},
+			messages: {
+				first: "*Please enter your first name",
+				last: "*Please enter your name",
+				teacher: {
+					required: "*Enter the teacher\'s email.",
+				},
+			},
+			submitHandler: function(form) {
+				$.ajax({
+					url: 'studentadd.php',
+					type: 'post',
+					data:$('#studentSignIn').serialize(),
+					error: function (textStatus) {
+						alert('Error: ', textStatus);
+					},
+					success:function(msg){
+						
+						$("#field").attr('value',msg);
+						form.submit();
+					}
+				});
+            }
+		});
+	});
+</script>
+  </head>
+  <body>
+
+ <h1>Quadrat Sampling</h1>
+ 
+ <form id="studentSignIn" method="post" action="collect.php">
+		<fieldset>
+			<legend>Your Information</legend>
+			<p> You must enter your information correctly and save it before completing the activity.</p>
+			<p>
+				<label for="first">Firstname</label>
+				<input id="first" name="first" type="text">
+			</p>
+			<p>
+				<label for="last">Lastname</label>
+				<input id="last" name="last" type="text">
+			</p>
+			<p>
+				<label for="teacher">Teacher email address</label>
+				<input id="teacher" name="teacher" type="email"> 
+			</p>
+			<p>
+				<label for="class">Period/Class</label>
+				<input id="class" name="class" type="text">
+			</p>
+			<input id="field" name="field" type="text" hidden>
+		</fieldset>
+		<p>
+				<input class="submit" type="submit" value="Save">
+		</p>
+</form>
+  </body>
+</html>            

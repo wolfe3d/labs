@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta http-equiv="Pragma" content="no-cache">
+	<script src="../../lib/jquery.js"></script>
+	<script src="../../lib/jquery.validate.min.js"></script>
+	<style>
+		.error {
+		color: red;
+		background-color: #acf;
+		}
+	</style>
+  <title>Quadrat Sampling Teacher Results</title>
+  <script type="text/javascript">
+
+	$().ready(function() {
+		$("#myBad").hide();
+		// validate signup form on keyup and submit
+		$("#teacherSignIn").validate({
+			rules: {
+				passMe: "required",
+				teacher: {
+					required: true,
+					email: true
+				},
+			},
+			messages: {
+				passMe: "*Please enter your first name",
+				teacher: {
+					required: "*Enter the teacher\'s email.",
+				},
+			},
+			submitHandler: function(form) {
+				$.ajax({
+					url: 'checkaccount.php',
+					type: 'post',
+					data:$('#teacherSignIn').serialize(),
+					error: function (textStatus) {
+						alert('Error: ', textStatus);
+					},
+					success:function(msg){
+						if(msg=="1")
+						{
+							form.submit();
+						}
+						else
+						{
+							$("#myBad").show();
+						}
+					}
+				});
+            }
+		});
+	});
+</script>
+</head>
+<body>
+
+<h1>Quadrat Sampling Teacher Download</h1>
+
+<form id="teacherSignIn" method="post" action="export.php">
+	<fieldset>
+		<legend>Your Information</legend>
+		<p>Download your class data.</p>
+		<p>
+			<label for="teacher">Teacher email address</label>
+			<input id="teacher" name="teacher" type="email"> 
+		</p>
+		<p>
+			<label for="passMe">Passcode</label>
+			<input id="passMe" name="passMe" type="password">
+		</p>
+	</fieldset>
+	<p>
+		<input class="submit" type="submit" value="Download">
+	</p>
+</form>
+<div id="myBad" class="error">There is a problem with the teacher email or passcode.  Or the account has expired.</div>
+</body>
+</html>            
