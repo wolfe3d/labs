@@ -1,5 +1,5 @@
 <?php
-require_once  ("connect_db.php");
+require_once  ("../../connect_db.php");
 
 $fieldId=intval($_GET['field']);
 /*check to see if id exists*/
@@ -29,8 +29,8 @@ imagefill($image, 0, 0, $bg);
 // choose a color for the ellipse
 $col_ellipse = imagecolorallocate($image, 0, 0, 0); //black
 
-for ($i = 0; $i < $numBlackCircles; $i++) 
-{ 
+for ($i = 0; $i < $numBlackCircles; $i++)
+{
 	$randomX = rand(0,$fieldWidth);
 	$randomY = rand(0,$fieldHeight);
 	// draw the ellipse
@@ -38,8 +38,8 @@ for ($i = 0; $i < $numBlackCircles; $i++)
 }
 
 $col_ellipse = imagecolorallocate($image, 255, 0, 0);  //red
-for ($i = 0; $i < $numRedCircles; $i++) 
-{ 
+for ($i = 0; $i < $numRedCircles; $i++)
+{
 	$randomX = rand(0,$fieldWidth);
 	$randomY = rand(0,$fieldHeight);
 	// draw the ellipse
@@ -48,8 +48,8 @@ for ($i = 0; $i < $numRedCircles; $i++)
 
 $col_ellipse = imagecolorallocate($image, 0, 0, 255); //blue
 $rectwidth = 3;
-for ($i = 0; $i < $numBlueRectangles; $i++) 
-{ 
+for ($i = 0; $i < $numBlueRectangles; $i++)
+{
 	$randomX = rand(0,$fieldWidth-$rectwidth );
 	$randomY = rand(0,$fieldHeight-$rectwidth );
 	// draw the ellipse

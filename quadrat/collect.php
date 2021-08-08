@@ -2,7 +2,7 @@
 <?php
 $fieldId=intval($_REQUEST['field']);
 
-require_once  ("connect_db.php");
+require_once  ("../../connect_db.php");
 
 /*check to see if id exists*/
 $query = "select * from `wolfe_fieldgenerator` where `field` = $fieldId";
@@ -96,22 +96,22 @@ var painting = document.getElementById('paint');
 var paint_style = getComputedStyle(painting);
 canvas.width = parseInt(paint_style.getPropertyValue('width'));
 canvas.height = parseInt(paint_style.getPropertyValue('height'));
-var spanX = document.getElementById("mX"); 
-var spanY = document.getElementById("mY"); 
+var spanX = document.getElementById("mX");
+var spanY = document.getElementById("mY");
 var mouse = {x: 0, y: 0};
 
-var background = new Image(); 
+var background = new Image();
 background.src = "imagegen.php?field=<?=$row['field']?>";
 // Make sure the image is loaded first otherwise nothing will draw.
 background.onload = function(){
-    ctx.drawImage(background,0,0);   
+    ctx.drawImage(background,0,0);
 }
 
 ctx.lineWidth = 1;
 ctx.rect(0, 0, canvas.width, canvas.height);
 ctx.stroke();
 ctx.closePath();
-ctx.beginPath(); 
+ctx.beginPath();
 
 canvas.addEventListener('mousemove', function(e) {
   mouse.x = e.pageX - this.offsetLeft;
@@ -131,8 +131,8 @@ canvas.addEventListener('mousedown', function(e) {
 	{
 		$("#size").attr('value',quadratLength);
 		if(mouse.x + quadratLength <= canvas.width && mouse.y + quadratLength <= canvas.height)
-		{	
-			ctx.beginPath(); 
+		{
+			ctx.beginPath();
 			ctx.rect(mouse.x,  mouse.y, quadratLength, quadratLength);
 			if(quadratLength>0)
 			{
@@ -148,9 +148,9 @@ canvas.addEventListener('mousedown', function(e) {
 function clearCanvas()
 {
 	//begin new paths
-	ctx.beginPath(); 
+	ctx.beginPath();
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.drawImage(background,0,0); 
+	ctx.drawImage(background,0,0);
 	ctx.rect(0, 0, canvas.width, canvas.height);
 	ctx.stroke();
 	ctx.closePath();
@@ -196,4 +196,4 @@ function clearCanvas()
 		</fieldset>
 </form>
   </body>
-</html>            
+</html>

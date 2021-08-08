@@ -1,5 +1,5 @@
 <?php
-require_once  ("/var/www/includes/connect_db.php");
+require_once  ("../../connect_db.php");
 
 $last = $mysqlConn->real_escape_string($_POST['last']);
 $first = $mysqlConn->real_escape_string($_POST['first']);

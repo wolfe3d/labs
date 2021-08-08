@@ -1,5 +1,5 @@
 <?php
-require_once  ("connectdb.php");
+require_once  ("../../connectdb.php");
 
 $fieldId=intval($_POST['field']);
 $sideLengthQuadrat = $mysqlConn->real_escape_string($_REQUEST['size']);
