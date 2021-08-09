@@ -22,7 +22,7 @@ if(isset($_REQUEST['field']))
 	$studentRed = !empty($_REQUEST['red'])? intval($_REQUEST['red']):0;
 	echo "Your estimated number of red circles: $studentRed<br>";
 	$studentBlack = !empty($_REQUEST['black'])? intval($_REQUEST['black']):0;
-	echo "Your estimated number of blue squares: $studentBlack<br>";
+	echo "Your estimated number of black diamonds: $studentBlack<br>";
 	$studentBlue = !empty($_REQUEST['blue'])? intval($_REQUEST['blue']):0;
 	echo "Your estimated number of blue squares: $studentBlue<br>";
 	$studentSimpson =!empty($_REQUEST['simpsons'])?  floatval($_REQUEST['simpsons']):0;
