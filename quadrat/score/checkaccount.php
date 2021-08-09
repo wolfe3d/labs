@@ -1,5 +1,5 @@
 <?php
-require_once ("../connectdb.php");
+require_once ("../../../connectdb.php");
 $teacherID = $mysqlConn->real_escape_string($_POST['teacher']) ;
 $passCode = $mysqlConn->real_escape_string($_POST['passMe']) ;
 

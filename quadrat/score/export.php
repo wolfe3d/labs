@@ -1,5 +1,5 @@
 <?php
-require_once ("../connectdb.php");
+require_once ("../../../connectdb.php");
 $teacherID = $mysqlConn->real_escape_string($_POST['teacher']) ;
 $passCode = $mysqlConn->real_escape_string($_POST['passMe']) ;
 
@@ -36,10 +36,10 @@ if (mysqli_num_rows($result)>0)
 				if ($total>0)
 				{
 					$speciesDiversityActual = round(1 - ((($row['black']*($row['black']-1))+($row['red']*($row['red']-1))+($row['blue']*($row['blue']-1)))/($total*($total-1))),2);
-				} 			
-				
+				}
+
 				$percentage=0;
-				
+
 				//calculates Simson's index using student values
 				$speciesDiversityStudent =0;
 				$speciesDiversityPercentDiff = 100;
@@ -54,7 +54,7 @@ if (mysqli_num_rows($result)>0)
 					{
 						$percentage += 50*.80; //give half credit for trying
 					}
-				} 
+				}
 				if(!empty($row['studentSimpson']))
 				{
 					$speciesDiversityPercentDiff = (abs($row['studentSimpson'] - $speciesDiversityStudent)/$speciesDiversityStudent) *100;
@@ -70,7 +70,7 @@ if (mysqli_num_rows($result)>0)
 
 				$gradePoints = 30; //determined by teacher
 				$grade = round(($percentage/100)*$gradePoints,0);
-				
+
 				$percentBlackCircles = round($percentBlackCircles,1);
 				$percentRedCircles  = round($percentRedCircles,1);
 				$percentBlueRectangles  = round($percentBlueRectangles,1);
