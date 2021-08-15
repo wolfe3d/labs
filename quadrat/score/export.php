@@ -14,7 +14,7 @@ if (mysqli_num_rows($result)>0)
 	header("Content-Disposition: attachment; filename=Report.csv");
 	$out = fopen('php://output', 'w');
 
-	fputcsv($out, array('last','first','class','teacher','percentage','grade','width', 'height', 'black diamonds', 'red circles', 'blue squares', 'Simpsons Index', 'quadrat side length', 'number of quadrats', 'student black', 'student red', 'student blue', 'student Simpson', 'Simpson Diversity based on Student Numbers', '%diff Black Diamonds', '%diff Red Circles', '%diff Blue Squares','%diff Total'));
+	fputcsv($out, array('last','first','class','teacher','last submission','percentage','grade','width', 'height', 'black diamonds', 'red circles', 'blue squares', 'Simpsons Index', 'quadrat side length', 'number of quadrats', 'student black', 'student red', 'student blue', 'student Simpson', 'Simpson Diversity based on Student Numbers', '%diff Black Diamonds', '%diff Red Circles', '%diff Blue Squares','%diff Total'));
 
 	/*search for teacherId*/
 	$query = "select * from `wolfe_fieldgenerator` where `teacher`='$teacherID'";
@@ -74,7 +74,7 @@ if (mysqli_num_rows($result)>0)
 				$percentBlackCircles = round($percentBlackCircles,1);
 				$percentRedCircles  = round($percentRedCircles,1);
 				$percentBlueRectangles  = round($percentBlueRectangles,1);
-				fputcsv($out, array($row['last'],$row['first'],$row['class'],$row['teacher'],$percentage, $grade,$row['width'],$row['height'],$row['black'],$row['red'],$row['blue'],$speciesDiversityActual,$row['sideLengthQuadrat'],$row['numQuadrats'],$row['studentBlack'],$row['studentRed'],$row['studentBlue'],$row['studentSimpson'], $speciesDiversityStudent, $percentBlackCircles, $percentRedCircles, $percentBlueRectangles, $percentDiff ));
+				fputcsv($out, array($row['last'],$row['first'],$row['class'],$row['teacher'],$row['lastsubmission'],$percentage, $grade,$row['width'],$row['height'],$row['black'],$row['red'],$row['blue'],$speciesDiversityActual,$row['sideLengthQuadrat'],$row['numQuadrats'],$row['studentBlack'],$row['studentRed'],$row['studentBlue'],$row['studentSimpson'], $speciesDiversityStudent, $percentBlackCircles, $percentRedCircles, $percentBlueRectangles, $percentDiff ));
 			}
 		endwhile;
 	}
